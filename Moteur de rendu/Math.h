@@ -33,7 +33,7 @@ struct Vect3 : public Vect2 {
 struct Triangle {
     Vect3 points[3];
 };
-struct Maillage{
-    vector<Triangle> maillage; 
-}
+// struct Maillage{
+//     vector<Triangle> maillage; 
+// }
 #endif

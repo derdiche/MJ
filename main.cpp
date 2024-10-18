@@ -1,7 +1,7 @@
 #include"./Moteur de rendu/MoteurRendu.h"
 int main() {
     try{
-        MoteurRendu mr(800, 600);
+        MoteurRendu mr;
         mr.lance();
     }
     catch (const std::runtime_error& e) {

@@ -1,6 +1,6 @@
 # Variables
 CXX = g++
-CXXFLAGS = -lglfw -lGL -lm -pthread
+CXXFLAGS = -lglfw -lGL -lm -pthread -lGLU -lGLEW -pthread
 TARGET = main
 SRCS = main.cpp
 
