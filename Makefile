@@ -6,6 +6,7 @@ SRCS = main.cpp
 
 # Règle par défaut
 all: $(TARGET)
+		./$(TARGET)
 
 # Règle pour créer l'exécutable
 $(TARGET): $(SRCS)
@@ -13,7 +14,7 @@ $(TARGET): $(SRCS)
 
 # Clean rule to remove the executable
 clean:
-	rm -f $(TARGET)
+	rm -f *.o $(TARGET)
 
 # Phony targets
 .PHONY: all clean

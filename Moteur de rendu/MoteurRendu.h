@@ -11,7 +11,7 @@
 #include "Math.h"
 
 class MoteurRendu {
-    GLFWwindow* fenetre;    
+    GLFWwindow* fenetre; 
     public:
         MoteurRendu(int largeur = 800, int hauteur = 600) {
             if (!glfwInit()) {
@@ -46,6 +46,7 @@ class MoteurRendu {
     void lance() {
         double lastTime = glfwGetTime();
         int nbFrames = 0;
+        int i=0;
 
         while (!glfwWindowShouldClose(fenetre)) {
             // Effacer le tampon de couleur
@@ -62,9 +63,8 @@ class MoteurRendu {
                 lastTime = currentTime; // Mettre à jour le temps pour la prochaine période
             }
 
-            // Dessiner un pixel rouge à la position (400, 300)
-            pix({1, 0, 0}, {400, 300}); // Centre de la fenêtre
-
+            ligne({1,0,0},{0,0},{799,599});
+     
             // Échanger les tampons
             glfwSwapBuffers(fenetre);
 
@@ -85,21 +85,50 @@ class MoteurRendu {
     }
 
     void pix(Vect3 rgb, Vect2 pos) {
-        // glMatrixMode(GL_MODELVIEW); // Assurez-vous que MODELVIEW est actif
-        // glLoadIdentity(); // Réinitialiser la matrice de modèle
-
-        // glColor3f(rgb.x, rgb.y, rgb.z); 
-        // glBegin(GL_POINTS);
-        // glVertex2i(pos.x, pos.y);
-        // glEnd();
         glBegin(GL_POINTS);
         glColor3f(rgb.x, rgb.y, rgb.z);
         glVertex2i(pos.x, pos.y);
         glEnd();
-        
-        // Rend l'affichage
         glFlush();
     }
+   
+    void ligne(Vect3 rgb, Vect2 debut, Vect2 fin) {
+        int dx = fin.x - debut.x;
+        int dy = fin.y - debut.y;
+        int abs_dx = std::abs(dx);
+        int abs_dy = std::abs(dy);
+        int sx = (dx > 0) ? 1 : -1; // Direction x
+        int sy = (dy > 0) ? 1 : -1; // Direction y
+
+        // Dessiner le pixel de départ
+        pix(rgb, debut);
+        
+        // Application de l'algorithme de Bresenham
+        bool swapped = false;
+        if (abs_dx < abs_dy) {
+            std::swap(debut.x, debut.y); // Échange si besoin pour simplifier la logique
+            std::swap(abs_dx, abs_dy);
+            swapped = true;
+        }
+
+        int err = abs_dx / 2;
+        for (int i = 0; i < abs_dx; ++i) {
+            if (swapped) {
+                pix(rgb, {debut.y, debut.x}); // Inverser les coordonnées
+            } else {
+                pix(rgb, debut);
+            }
+
+            err -= abs_dy;
+            if (err < 0) {
+                debut.y += sy;
+                err += abs_dx;
+            }
+            debut.x += sx;
+        }
+    }
+
+   
 };
 
 #endif 
