@@ -1,5 +1,25 @@
 #ifndef MATH_H
 #define MATH_H
+template <typename T>
+T vAbs(T x) {//valeur absolue
+    return (x < 0) ? -x : x;
+}
+template <typename T>
+void echange(T a,T b) {//swipe
+    if (&a != &b) { // Pour éviter de faire un XOR sur la même variable
+        T temp = a; 
+        a = b;
+        b = temp;
+    }
+}
+template <typename T>
+T max(T a,T b) {
+    return (a > b) ? a : b; 
+}
+template <typename T>
+T min(T a,T b) {
+    return (a < b) ? a : b; 
+}
 
 struct Vect2 {
     float x, y;

@@ -6,9 +6,10 @@
 #include <iostream>
 
 #include <iostream>     // Pour std::cout et std::endl
-
-#include <chrono>
 #include "Math.h"
+#include <chrono>
+#include <vector>
+#include "Algo.h"
 
 class MoteurRendu {
     GLFWwindow* fenetre; 
@@ -84,7 +85,7 @@ class MoteurRendu {
         glMatrixMode(GL_MODELVIEW); // Repasser au mode MODELVIEW
     }
 
-    void pix(Vect3 rgb, Vect2 pos) {
+    inline void pix(Vect3 rgb, Vect2 pos) {
         glBegin(GL_POINTS);
         glColor3f(rgb.x, rgb.y, rgb.z);
         glVertex2i(pos.x, pos.y);
@@ -92,39 +93,10 @@ class MoteurRendu {
         glFlush();
     }
    
-    void ligne(Vect3 rgb, Vect2 debut, Vect2 fin) {
-        int dx = fin.x - debut.x;
-        int dy = fin.y - debut.y;
-        int abs_dx = std::abs(dx);
-        int abs_dy = std::abs(dy);
-        int sx = (dx > 0) ? 1 : -1; // Direction x
-        int sy = (dy > 0) ? 1 : -1; // Direction y
-
-        // Dessiner le pixel de départ
-        pix(rgb, debut);
-        
-        // Application de l'algorithme de Bresenham
-        bool swapped = false;
-        if (abs_dx < abs_dy) {
-            std::swap(debut.x, debut.y); // Échange si besoin pour simplifier la logique
-            std::swap(abs_dx, abs_dy);
-            swapped = true;
-        }
-
-        int err = abs_dx / 2;
-        for (int i = 0; i < abs_dx; ++i) {
-            if (swapped) {
-                pix(rgb, {debut.y, debut.x}); // Inverser les coordonnées
-            } else {
-                pix(rgb, debut);
-            }
-
-            err -= abs_dy;
-            if (err < 0) {
-                debut.y += sy;
-                err += abs_dx;
-            }
-            debut.x += sx;
+    void ligne( const Vect3 rgb, const Vect2 debut,const Vect2 fin) {
+        std::vector<Vect2> pixels =dda(debut, fin);
+        for (const auto& pixel : pixels) {
+            pix(rgb,pixel);
         }
     }
 
