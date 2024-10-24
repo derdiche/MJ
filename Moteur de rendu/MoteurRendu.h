@@ -8,8 +8,8 @@
 #include <iostream>     // Pour std::cout et std::endl
 #include "Math.h"
 #include <chrono>
-#include <vector>
 #include "Algo.h"
+
 
 class MoteurRendu {
     GLFWwindow* fenetre; 
@@ -27,7 +27,7 @@ class MoteurRendu {
             
             glfwMakeContextCurrent(fenetre);
             glfwSetFramebufferSizeCallback(fenetre, adapteRedimension);
-            glfwSwapInterval(1); // Activer la synchronisation verticale (V-Sync)
+            glfwSwapInterval(0); // desactiver la synchronisation verticale (V-Sync) pour ne pas etre brider a 60fps
             if (glewInit() != GLEW_OK) {
                 glfwTerminate();
                 throw std::runtime_error("Erreur : impossible d'initialiser GLEW");
@@ -48,6 +48,12 @@ class MoteurRendu {
         double lastTime = glfwGetTime();
         int nbFrames = 0;
         int i=0;
+        Triangle t = {
+            {400, 100}, // Point 1
+            {250, 500}, // Point 2
+            {550, 500}, // Point 3
+            {100,0,0}   //couleur rgb en %
+        };
 
         while (!glfwWindowShouldClose(fenetre)) {
             // Effacer le tampon de couleur
@@ -64,7 +70,9 @@ class MoteurRendu {
                 lastTime = currentTime; // Mettre à jour le temps pour la prochaine période
             }
 
-            ligne({1,0,0},{0,0},{799,599});
+            ligne({1,0,0},{0,0},{800,600});
+            t.points[0].x++;
+            triangle(t);
      
             // Échanger les tampons
             glfwSwapBuffers(fenetre);
@@ -87,18 +95,38 @@ class MoteurRendu {
 
     inline void pix(Vect3 rgb, Vect2 pos) {
         glBegin(GL_POINTS);
-        glColor3f(rgb.x, rgb.y, rgb.z);
+        glColor3f(rgb.x/100, rgb.y/100, rgb.z/100);
         glVertex2i(pos.x, pos.y);
         glEnd();
         glFlush();
     }
    
     void ligne( const Vect3 rgb, const Vect2 debut,const Vect2 fin) {
-        std::vector<Vect2> pixels =dda(debut, fin);
-        for (const auto& pixel : pixels) {
+        for (const auto& pixel : dda(debut, fin)) {
             pix(rgb,pixel);
         }
     }
+    void triangle(  Triangle tri,bool plein=false) {
+        if (plein) {    
+            // Remplissage du triangle
+            for (int y = (int)tri.minY; y <(int)tri.maxY; y++) {
+                for (int x = (int) tri.minX; x < (int)tri.maxX; x++) {
+                    Vect2 p(x, y);
+                    if (isInside(tri, p)) {
+                        pix(tri.rgb, p); // Cette fonction doit remplir le pixel à la position p avec la couleur rgb
+                   }
+                }
+            }
+        }
+        else{
+            ligne(tri.rgb,tri.points[0],tri.points[1]);
+            ligne(tri.rgb,tri.points[1],tri.points[2]);
+            ligne(tri.rgb,tri.points[2],tri.points[0]);
+        }
+    }
+
+    
+
 
    
 };

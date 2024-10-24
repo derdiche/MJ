@@ -1,6 +1,6 @@
 # Variables
 CXX = g++
-CXXFLAGS = -lglfw -lGL -lm -pthread -lGLU -lGLEW -pthread
+CXXFLAGS = -lglfw -lGL -lm -pthread -lGLU -lGLEW -pthread -O3 -march=native -funroll-loops -flto
 TARGET = main
 SRCS = main.cpp
 
